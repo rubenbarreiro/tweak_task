@@ -4,7 +4,7 @@ This task was made using serverless framework, before running the code, check th
 
 Current public endpoint is:
 ```
-https://hlgbk8066h.execute-api.us-east-1.amazonaws.com/dev/file/upload
+POST https://hlgbk8066h.execute-api.us-east-1.amazonaws.com/dev/file/upload
 ```
 
 Running locally:
