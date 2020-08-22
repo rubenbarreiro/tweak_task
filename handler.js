@@ -5,7 +5,6 @@ const aws = require('aws-sdk')
 const multipartParser = require('lambda-multipart-parser');
 const to = require('await-to-js').default;
 const fs = require('fs').promises
-const exif = require('exiftool');
 const { exec } = require('child_process');
 
 const uploadFile = (file, filePath) => {
@@ -29,31 +28,30 @@ const uploadFile = (file, filePath) => {
 
 const storeExifData = (filePath, data) => {
   return new Promise(async (resolve, reject) => {
-    /*const fileLocation = `/tmp/${filePath}`
-    console.log('\x1b[33m 33 handler.js > fileLocation === \x1b[0m ', fileLocation)
-    await fs.writeFile(fileLocation, data)*/
+    const fileLocation = `/tmp/${filePath}`
+    await fs.writeFile(fileLocation, data)
 
-    exif.metadata(data, async (err, metaData) => {
-      if (err) {
-        return reject(err)
-      }
+    exec(`perl ${__dirname}/bin/exiftool/exiftool ${fileLocation} -j`, async (error, stdout, stderr) => {
+      await fs.unlink(fileLocation)
+      if (error) {
+        console.log(error.stack);
+        console.log('Error code: '+error.code);
+        console.log('Signal received: '+error.signal);
 
-      const finalMetaData = {}
-      for (const row in metaData) {
-        finalMetaData[row] = metaData[row]
+        return reject(error)
       }
 
       const [errS3] = await to(uploadFile({
         filename: 'meta_data.json',
         contentType: 'application/json',
-        content: JSON.stringify(finalMetaData, null, 2)
+        content: stdout
       }, filePath))
       if (errS3) {
         return reject(errS3)
       }
 
       return resolve()
-    })
+    });
   });
 }
 
@@ -65,9 +63,16 @@ const formatResponse = (code, data) => {
 }
 
 module.exports.fileUpload = async (event, context, callback) => {
+  if (!event.body) {
+    return callback(null, formatResponse(400, { message: 'Request is empty' }));
+  }
+
   const body = await multipartParser.parse(event);
   const filePath = Date.now();
   const file = body.files[0]
+  if (!body.files || !body.files.length) {
+    return callback(null, formatResponse(400, { message: 'No file provided' }));
+  }
 
   const [errUpload] = await to(uploadFile(file, filePath))
   if (errUpload) {
@@ -83,6 +88,6 @@ module.exports.fileUpload = async (event, context, callback) => {
 
   return callback(null, {
     statusCode: 200,
-    body: JSON.stringify({ message: 'File uploaded succesfully' })
+    body: JSON.stringify({ message: `File uploaded succesfully to ${filePath}/` })
   })
 };

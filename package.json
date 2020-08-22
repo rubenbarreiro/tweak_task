@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "await-to-js": "2.1.1",
-    "exiftool": "git@github.com:nathanpeck/exiftool.git#c78da67cf924402c8a1c162b078bde7d4eb4b917",
     "lambda-multipart-parser": "0.0.2"
   },
   "devDependencies": {
