@@ -9,10 +9,10 @@ POST https://hlgbk8066h.execute-api.us-east-1.amazonaws.com/dev/file/upload
 
 Running locally:
 ```
-http://localhost:3000/dev/file/upload
+POST http://localhost:3000/dev/file/upload
 ```
 
-Endpoint will require a file to be sent as a `multipart/form-data`
+Endpoint will require a file to be sent as a `multipart/form-data`, A postman collection can't be found here: https://www.getpostman.com/collections/f0bcccf81dbae6b16569
 
 * Aws credencials must be provided in `~/.aws/credentials` file to get the s3 feature working.  
 * Tested in ubuntu 18.04, to get exiftool work in other OS, look into https://exiftool.org/
