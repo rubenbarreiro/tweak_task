@@ -4,3 +4,9 @@ jspm_packages
 
 # Serverless directories
 .serverless
+
+# binaries
+bin/exiftool
+
+# images, because those are meant to bee for testting only
+*.png

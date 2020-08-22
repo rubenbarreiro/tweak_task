@@ -57,7 +57,7 @@ provider:
 # you can add packaging information here
 package:
   include:
-    - binaries/**
+    - bin/**
 #    - include-me.js
 #    - include-me-dir/**
 #  exclude:
@@ -65,18 +65,14 @@ package:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
+  fileUpload:
+    handler: handler.fileUpload
+    layers:
+      - arn:aws:lambda:us-east-1:445285296882:layer:perl-5-32-runtime-al2:1
     events:
       - http:
           path: file/upload
           method: post
-          # integration: LAMBDA
-          # request:
-          #   contentHandling: CONVERT_TO_TEXT
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
